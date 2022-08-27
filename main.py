@@ -33,6 +33,21 @@ for article in articles:
             'snippets' : snippets
         }
         list_of_articles.append(keyword_article_dict)
+    else:
+        #if don't find keywords - open article and find in it
+        r = requests.get(href, headers=HEADERS)
+        soup = BeautifulSoup(r.text, features='html.parser')
+        article_text = soup.find(class_='tm-article-body').text
+        words = [article_text.lower().find(word.lower()) for word in KEYWORDS]
+        if sum(words) != -len(KEYWORDS):
+            keyword_article_dict = {
+                'title': title,
+                'href': href,
+                'nick_name': nick_name,
+                'date': date,
+                'snippets': snippets
+                }
+            list_of_articles.append(keyword_article_dict)
 print(f'Список статьей с ключевыми словами: {KEYWORDS}:')
 for article in list_of_articles:
     print(f"{article['date']} - {article['title']} - {article['href']}" )
